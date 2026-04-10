@@ -23,7 +23,7 @@ const app = express();
 app.use(express.json());
 
 const postRouter = express.Router();
-app.use('/api/post', postRouter);
+app.use('/post', postRouter);
 
 // get all post
 postRouter.get('/', async (req, rest) => {
@@ -110,11 +110,68 @@ postRouter.delete('/:id', async (req, res) => {
 });
 
 const commentRouter = express.Router();
-app.use('/api/post-comment', commentRouter)
+app.use('/post-comment', commentRouter)
 
-// get list comment
-commentRouter.get("/", async (req, res) => {
+// get all comment
+commentRouter.get('/', async (req, rest) => {
+    try {
+        const comments = await Comment.findAll();
+        rest.status(200).json({data: comments });
+    } catch (error) {
+        rest.status(500).json ({ message: "server error" })
+    }
 })
+
+// bikin comment
+commentRouter.post('/', async (req, res) => {
+    try {
+        const payload = req.body;
+        if (!payload.post_id || !payload.username || !payload.content) {
+            return res.status(400).json({ message: "Body request masih kosong" });
+        }
+
+        const post = await Post.findByPk(payload.post_id);
+        if (!post) {
+            return res.status(404).json({ message: "Post tidak ditemukan" });
+        }
+
+        const newComment = await Comment.create({
+            post_id: payload.post_id, 
+            username: payload.username,
+            content: payload.content
+        });
+
+        res.status(201).json(newComment);
+    } catch (error) {
+        res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    }
+});
+
+// update comment
+commentRouter.put('/:id', async (req, res) => {
+    try {
+        const comment = await Comment.findByPk(req.params.id);
+        if (!comment) return res.status(404).json({ message: "Comment tidak ditemukan" });
+
+        await comment.update({ content: req.body.content });
+        res.status(200).json(comment);
+    } catch (error) {
+        res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    }
+});
+
+// delete comment
+commentRouter.delete('/:id', async (req, res) => {
+    try {
+        const comment = await Comment.findByPk(req.params.id);
+        if (!comment) return res.status(404).json({ message: "Post tidak ditemukan" });
+
+        await comment.destroy();
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    }
+});
 
 const PORT = 3000;
 
