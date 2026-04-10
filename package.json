@@ -2,10 +2,10 @@
   "name": "kuis2",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.ts",
   "scripts": {
-    "dev": "nodemon --exec tsx index.ts",
-    "start": "tsx index.ts",
+    "dev": "nodemon --exec tsx src/main.ts",
+    "start": "tsx main.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,11 +17,14 @@
     "express": "^5.2.1",
     "pg": "^8.20.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.8"
+    "reflect-metadata": "^0.2.2",
+    "sequelize": "^6.37.8",
+    "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.2",
+    "@types/validator": "^13.15.10",
     "nodemon": "^3.1.14",
     "sequelize-cli": "^6.6.5",
     "tsx": "^4.21.0",
